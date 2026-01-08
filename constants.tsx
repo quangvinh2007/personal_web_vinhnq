@@ -1,7 +1,7 @@
 import React from "react";
 import { Layout, Smartphone, Database, Code } from "lucide-react";
 import { Project, Skill, Service } from "./types";
-import rentzyImg from "./images/rentzy.png";
+import rentzyImg from "./public/images/rentzy.png";
 export const PROJECTS: Project[] = [
   {
     id: 1,
