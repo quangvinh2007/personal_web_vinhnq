@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VinhNQ | Fullstack Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              // Universe Theme - Black Edition
+              "space-dark": "#000000",
+              "space-darker": "#0a0a0a",
+              "nebula-purple": "#1a1a1a",
+              "cosmic-blue": "#3b82f6",
+              "cosmic-cyan": "#06b6d4",
+
+              // Legacy colors (kept for compatibility)
+              background: "#000000",
+              surface: "#0f0f0f",
+              accent: "#ffffff",
+              accentSecondary: "#fb923c",
+              textPrimary: "#f3f4f6",
+              textSecondary: "#9ca3af",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+            animation: {
+              "glow-slow": "glow 8s ease-in-out infinite alternate",
+              float: "float 6s ease-in-out infinite",
+              twinkle: "twinkle 3s ease-in-out infinite",
+              "pulse-nebula": "pulse-nebula 4s ease-in-out infinite",
+              "shoot-star": "shoot-star 3s ease-in-out infinite",
+              drift: "drift 20s linear infinite",
+            },
+            keyframes: {
+              glow: {
+                "0%": {
+                  "box-shadow": "0 0 20px -5px rgba(255, 255, 255, 0.3)",
+                },
+                "100%": {
+                  "box-shadow": "0 0 50px 5px rgba(255, 255, 255, 0.6)",
+                },
+              },
+              float: {
+                "0%, 100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-20px)" },
+              },
+              twinkle: {
+                "0%, 100%": { opacity: "0.3" },
+                "50%": { opacity: "1" },
+              },
+              "pulse-nebula": {
+                "0%, 100%": { opacity: "0.2" },
+                "50%": { opacity: "0.4" },
+              },
+              "shoot-star": {
+                "0%": {
+                  transform: "translateX(-100%) translateY(-100%)",
+                  opacity: "0",
+                },
+                "10%": { opacity: "1" },
+                "90%": { opacity: "1" },
+                "100%": {
+                  transform: "translateX(100vw) translateY(100vh)",
+                  opacity: "0",
+                },
+              },
+              drift: {
+                "0%": { transform: "translate(0, 0)" },
+                "100%": { transform: "translate(100px, 100px)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        background: linear-gradient(
+          135deg,
+          #000000 0%,
+          #0a0a0a 50%,
+          #000000 100%
+        );
+        color: #f3f4f6;
+        overflow-x: hidden;
+        width: 100%;
+        height: 100%;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Universe Background Styling */
+      .universe-background {
+        background: linear-gradient(
+          135deg,
+          #000000 0%,
+          #0a0a0a 50%,
+          #000000 100%
+        );
+        position: relative;
+      }
+
+      ::selection {
+        background: #ffffff;
+        color: #000000;
+      }
+
+      /* Glass Morphism with Black Tint */
+      .glass {
+        background: rgba(15, 15, 15, 0.5);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+
+      .glass:hover {
+        border-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
+      }
+
+      /* Gradient Text */
+      .gradient-text {
+        background: linear-gradient(90deg, #ffffff, #06b6d4, #fb923c);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Glow Effects */
+      .glow-accent {
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.4),
+          0 0 60px rgba(255, 255, 255, 0.2);
+      }
+
+      .glow-accent:hover {
+        box-shadow: 0 0 50px rgba(255, 255, 255, 0.6),
+          0 0 100px rgba(255, 255, 255, 0.3);
+      }
+
+      /* Custom Scrollbar */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(10, 10, 10, 0.5);
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #ffffff, #06b6d4);
+        border-radius: 10px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #f0f0f0, #22d3ee);
+      }
+
+      /* Smooth Transitions */
+      * {
+        transition: color 0.3s ease, border-color 0.3s ease;
+      }
+
+      button,
+      a {
+        transition: all 0.3s ease;
+      }
+
+      /* Star glow effect */
+      .star-glow {
+        filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+      }
+
+      /* Nebula card effect */
+      .nebula-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .nebula-card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 70%
+        );
+        animation: nebula-glow 8s ease-in-out infinite;
+      }
+
+      @keyframes nebula-glow {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(1.2);
+        }
+      }
+    </style>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "react/": "https://esm.sh/react@^19.2.3/",
+          "react": "https://esm.sh/react@^19.2.3",
+          "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+          "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
+  <body class="custom-scrollbar">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
