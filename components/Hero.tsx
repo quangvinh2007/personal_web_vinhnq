@@ -12,8 +12,9 @@ const personalImages = [
 const Hero: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState(0);
-  const [dragOffset, setDragOffset] = useState(0);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isFlipping, setIsFlipping] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -42,58 +43,80 @@ const Hero: React.FC = () => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
-    setDragStart(e.clientX);
-    setDragOffset(0);
+    setDragStart({ x: e.clientX, y: e.clientY });
+    setDragOffset({ x: 0, y: 0 });
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
-    const offset = e.clientX - dragStart;
-    setDragOffset(offset);
+    const offsetX = e.clientX - dragStart.x;
+    const offsetY = e.clientY - dragStart.y;
+    setDragOffset({ x: offsetX, y: offsetY });
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
     setIsDragging(false);
 
-    const offset = e.clientX - dragStart;
-    const threshold = 50; // Khoảng cách tối thiểu để xem là swipe
+    const offsetX = e.clientX - dragStart.x;
+    const offsetY = e.clientY - dragStart.y;
+    const threshold = 50;
 
-    if (Math.abs(offset) > threshold) {
-      if (offset > 0) {
-        // Vuốt sang phải -> quay lại ảnh trước
+    // Ưu tiên vuốt dọc (lật ảnh) hơn vuốt ngang
+    if (
+      Math.abs(offsetY) > Math.abs(offsetX) &&
+      Math.abs(offsetY) > threshold
+    ) {
+      // Vuốt lên -> lật ảnh
+      setIsFlipping(true);
+      setTimeout(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % personalImages.length);
+        setIsFlipping(false);
+      }, 300);
+    } else if (Math.abs(offsetX) > threshold) {
+      if (offsetX > 0) {
         setCurrentImageIndex((prev) =>
           prev === 0 ? personalImages.length - 1 : prev - 1
         );
       } else {
-        // Vuốt sang trái -> đến ảnh tiếp theo
         setCurrentImageIndex((prev) => (prev + 1) % personalImages.length);
       }
     }
 
-    setDragOffset(0);
+    setDragOffset({ x: 0, y: 0 });
     resetAutoPlay();
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setIsDragging(true);
-    setDragStart(e.touches[0].clientX);
-    setDragOffset(0);
+    setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    setDragOffset({ x: 0, y: 0 });
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
-    const offset = e.touches[0].clientX - dragStart;
-    setDragOffset(offset);
+    const offsetX = e.touches[0].clientX - dragStart.x;
+    const offsetY = e.touches[0].clientY - dragStart.y;
+    setDragOffset({ x: offsetX, y: offsetY });
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     setIsDragging(false);
 
-    const offset = e.changedTouches[0].clientX - dragStart;
+    const offsetX = e.changedTouches[0].clientX - dragStart.x;
+    const offsetY = e.changedTouches[0].clientY - dragStart.y;
     const threshold = 50;
 
-    if (Math.abs(offset) > threshold) {
-      if (offset > 0) {
+    if (
+      Math.abs(offsetY) > Math.abs(offsetX) &&
+      Math.abs(offsetY) > threshold
+    ) {
+      setIsFlipping(true);
+      setTimeout(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % personalImages.length);
+        setIsFlipping(false);
+      }, 300);
+    } else if (Math.abs(offsetX) > threshold) {
+      if (offsetX > 0) {
         setCurrentImageIndex((prev) =>
           prev === 0 ? personalImages.length - 1 : prev - 1
         );
@@ -102,7 +125,7 @@ const Hero: React.FC = () => {
       }
     }
 
-    setDragOffset(0);
+    setDragOffset({ x: 0, y: 0 });
     resetAutoPlay();
   };
 
@@ -171,7 +194,7 @@ const Hero: React.FC = () => {
           </div>
         </div>
 
-        {/* Phần ảnh cá nhân - Carousel với Swipe */}
+        {/* Phần ảnh cá nhân - Carousel với Swipe 3D */}
         <div className="relative order-1 md:order-2 flex justify-center">
           <div className="relative w-64 h-64 lg:w-96 lg:h-96 group cursor-grab active:cursor-grabbing">
             {/* Animated Frame */}
@@ -182,6 +205,7 @@ const Hero: React.FC = () => {
             <div
               ref={carouselRef}
               className="absolute inset-0 overflow-hidden rounded-3xl glass border-white/10"
+              style={{ perspective: "1000px" }}
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
@@ -191,11 +215,21 @@ const Hero: React.FC = () => {
               onTouchEnd={handleTouchEnd}
             >
               <div className="relative w-full h-full">
-                {/* Ảnh carousel với hiệu ứng trượt */}
+                {/* Ảnh carousel với hiệu ứng 3D */}
                 <div
-                  className="relative w-full h-full transition-transform duration-300 ease-out"
+                  className="relative w-full h-full"
                   style={{
-                    transform: `translateX(${dragOffset}px)`,
+                    transform: isFlipping
+                      ? "rotateX(-90deg)"
+                      : `translateX(${dragOffset.x}px) translateY(${
+                          dragOffset.y
+                        }px) rotateX(${dragOffset.y * 0.1}deg)`,
+                    transition: isFlipping
+                      ? "transform 0.3s ease-in"
+                      : isDragging
+                      ? "none"
+                      : "transform 0.3s ease-out",
+                    transformStyle: "preserve-3d",
                   }}
                 >
                   <img
@@ -208,31 +242,32 @@ const Hero: React.FC = () => {
                   {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
 
-                  {/* Tag góc dưới */}
-                  <div className="absolute bottom-6 left-6">
+                  {/* Tag góc dưới trái */}
+                  <div className="absolute bottom-4 left-4">
                     <p className="text-sm font-mono text-white">#vinhnq</p>
+                  </div>
+
+                  {/* Dots indicator - đặt trong ảnh, góc dưới phải */}
+                  <div className="absolute bottom-4 right-4 flex gap-2">
+                    {personalImages.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentImageIndex(index);
+                          resetAutoPlay();
+                        }}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          index === currentImageIndex
+                            ? "bg-white w-6"
+                            : "bg-white/40 hover:bg-white/60"
+                        }`}
+                        aria-label={`Go to image ${index + 1}`}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Dots indicator - tương tác được */}
-            <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 flex gap-3">
-              {personalImages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setCurrentImageIndex(index);
-                    resetAutoPlay();
-                  }}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index === currentImageIndex
-                      ? "bg-white w-8"
-                      : "bg-white/40 hover:bg-white/60"
-                  }`}
-                  aria-label={`Go to image ${index + 1}`}
-                />
-              ))}
             </div>
           </div>
         </div>

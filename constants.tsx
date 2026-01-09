@@ -1,7 +1,7 @@
 import React from "react";
 import { Layout, Smartphone, Database, Code } from "lucide-react";
 import { Project, Skill, Service } from "./types";
-import rentzyImg from "./public/images/rentzy.png";
+// import rentzyImg from "./public/images/rentzy.png";
 export const PROJECTS: Project[] = [
   {
     id: 1,
@@ -36,7 +36,7 @@ export const PROJECTS: Project[] = [
     role: "Fullstack Developer",
     teamSize: 5, // Assumed since no team count mentioned specifically for this one, but user listed links.
     link: "https://github.com/vankhai-coder/SEP_Rentzy",
-    image: rentzyImg,
+    image: "/images/rentzy.png",
   },
 ];
 
